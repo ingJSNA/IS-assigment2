@@ -35,71 +35,57 @@ class Directions:
 
 # In[ ]:
 
-def getMap(e):
-    mapa = [[0] * 6 for i in range(1,6)]
-    mapa[1][1]=1
-    mapa[1][3]=1
-    mapa[1][4]=1
+def getMap():
+    mapa = [[0] * 6 for i in range(1, 6)]
+    mapa[1][1] = 1
+    mapa[1][3] = 1
+    mapa[1][4] = 1
     
-    mapa[3][1]=1
-    mapa[3][3]=1
-    mapa[3][4]=1
+    mapa[3][1] = 1
+    mapa[3][3] = 1
+    mapa[3][4] = 1
 
-    matriz = [[None] * 6 for i in range(1,6)]
-    px=0
-    a=0
+    matriz = [[None] * 6 for i in range(1, 6)]
     
-    for x in range(0,5):
-        for y in range(0,6):
-            px=px+ mapa [x][y]
-            a=a+1
-    print px, a
-    px= (a-px) ;
-    px = 1 /float(px)
+    px = 1 / float(24)
     
-        
-    for x in range(0,5):
-        for y in range(0,6):
-            if(mapa [x][y]== 1):
-                p=0.0
+    for x in range(0, 5):
+        for y in range(0, 6):
+            if(mapa [x][y] == 1):
+                p = 0.0
             else:
-                p=1/float(24)
+                p = px
             
-            if(x==0):
-                n=1-e
-            elif(mapa[x-1][y]==1):
-                n=1-e
+            if(x == 0):
+                n = True
+            elif(mapa[x - 1][y] == 1):
+                n = True
             else:
-                n=e
+                n = False
             
-            if(x==4):
-                s=1-e
-            elif(mapa[x+1][y]==1):
-                s=1-e
+            if(x == 4):
+                s = True
+            elif(mapa[x + 1][y] == 1):
+                s = True
             else:
-                s=e
+                s = False
             
-            if(y==0):
-                l=1-e
-            elif(mapa[x][y-1]==1):
-                l=1-e
+            if(y == 0):
+                l = True
+            elif(mapa[x][y - 1] == 1):
+                l = True
             else:
-                l=e
+                l = False
             
-            if(y==5):
-                r=1-e
-            elif(mapa[x][y+1]==1):
-                r=1-e
+            if(y == 5):
+                r = True
+            elif(mapa[x][y + 1] == 1):
+                r = True
             else:
-                r=e
+                r = False
             
-            matriz[x][y]=[n,l,p,r,s]
+            matriz[x][y] = [n, l, p, r, s]
             
-    
-    
-     
-    print mapa
-    print matriz
     return matriz
 
 # In[10]:
@@ -110,22 +96,48 @@ def P_1(eps, E_N, E_S):
     Arguments: E_N, E_S \in {True,False}
                0 <= eps <= 1 (epsilon)
     '''
-    matrix = getMap(eps)
+    truePerception = 1 - eps;
+    falsePerception = eps;
+    
+    
+    matrix = getMap()
     den = 0
     for i in range(len(matrix)):
         row = matrix[i]
-        print "columns", len(matrix), len(row)
         for j in range(len(row)):
-            print "row",j,row[j]
-            n,l,p,r,s = row[j]
-            den += (p*n*s)
-    
-    print "den", den
+            n, l, p, r, s = row[j]
             
-    pd = {(x,y):0 for x in range(1,7) for y in range(1,6)}
+            pn = falsePerception
+            ps = falsePerception
+            if n == E_N:
+                pn = truePerception
+            if s == E_S:
+                ps = truePerception
+            den += (p * pn * ps)
+    
+    
+    pd = {(x, y):0 for x in range(1, 7) for y in range(1, 6)}
+    
+    for i in range(len(matrix)):
+        row = matrix[i]
+        for j in range(len(row)):
+            n, l, p, r, s = row[j]
+            pn = falsePerception
+            ps = falsePerception
+            if n == E_N:
+                pn = truePerception
+            if s == E_S:
+                ps = truePerception
+            p = (p * pn * ps) / den
+            
+            row[j] = [n, l, p, r, s]
+            # Cambiar a coordenadas cartesianas
+            pd[(j + 1, 5 - i)] = p
+                
+    
     return pd
 
-P_1(0, True, False)
+P_1(0.0, True, False)
 
 
 # ii. $P(E_{E}=e_{E}|E_{N}=e_{N},E_{S}=E_{S})$
@@ -181,7 +193,7 @@ def P_4(eps, E_1, E_3):
     Arguments: E_1, E_3 dictionaries of type Directions --> {True,False}
                0 <= eps <= 1
     '''
-    pd = {(x,y):0 for x in range(1,7) for y in range(1,6)}
+    pd = {(x, y):0 for x in range(1, 7) for y in range(1, 6)}
     return pd
 
 E_1 = {Directions.NORTH: True, Directions.SOUTH: False, Directions.EAST: True, Directions.WEST: False}
@@ -199,7 +211,7 @@ def P_5(eps, E_2, E_3, E_4):
     Arguments: E_2, E_3, E_4 dictionaries of type Directions --> {True,False}
                0 <= eps <= 1
     '''
-    pd = {(x,y):0 for x in range(1,7) for y in range(1,6)}
+    pd = {(x, y):0 for x in range(1, 7) for y in range(1, 6)}
     return pd
 
 E_2 = {Directions.NORTH: True, Directions.SOUTH: False, Directions.EAST: True, Directions.WEST: False}
@@ -251,7 +263,7 @@ P_7(0.1, True, False)
 # In[17]:
 
 def approx_equal(val1, val2):
-    return abs(val1-val2) <= 0.00001
+    return abs(val1 - val2) <= 0.00001
 
 def test_P_1():
     pd = P_1(0.0, True, True)
