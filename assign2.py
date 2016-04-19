@@ -35,7 +35,7 @@ class Directions:
 
 # In[ ]:
 
-def getMap():
+def getMapa():
     mapa = [[0] * 6 for i in range(1, 6)]
     mapa[1][1] = 1
     mapa[1][3] = 1
@@ -44,6 +44,10 @@ def getMap():
     mapa[3][1] = 1
     mapa[3][3] = 1
     mapa[3][4] = 1
+    return mapa
+
+def getMap():
+    mapa = getMapa()
 
     matriz = [[None] * 6 for i in range(1, 6)]
     
@@ -150,7 +154,62 @@ def P_2(eps, E_N, E_S):
     Arguments: E_N, E_S \in {True,False}
                0 <= eps <= 1
     '''
-    pd = {True:0, False:0}
+    
+    truePerception = 1 - eps;
+    falsePerception = eps;
+    
+    mapa = getMapa()
+    matrix = getMap()
+    den = 0
+    for i in range(len(matrix)):
+        row = matrix[i]
+        for j in range(len(row)):
+            n, l, p, r, s = row[j]
+            
+            pn = falsePerception
+            ps = falsePerception
+
+            if n == E_N:
+                pn = truePerception
+            if s == E_S:
+                ps = truePerception
+            den += (r * pn * ps)
+
+    
+    
+    
+    
+
+    count=0
+    
+    for i in range(len(matrix)):
+        row = matrix[i]
+        for j in range(len(row)):
+            n, l, p, r, s = row[j]
+            pn = falsePerception
+            ps = falsePerception
+            pr = falsePerception
+            if n == E_N:
+                pn = truePerception
+            if s == E_S:
+                ps = truePerception
+           # print r
+            if mapa[i][j]==0:
+                wall=1
+            else:
+                wall=0
+            
+            if r == True:
+                pr = truePerception
+            else:
+                pr = falsePerception
+            pr = (pr * pn * ps*wall)
+           # print i,' ',j
+            count += pr 
+          #  print pr
+            
+    pd = {True:count/24, False:(24-count)/24}   
+    
     return pd
 
 P_2(0.2, True, False)
@@ -319,7 +378,7 @@ def test_P_7():
     pd = P_7(0.3, False, False)
     assert approx_equal(pd[False], 0.5023529411764706)
     
-test_P_1()
+test_P_3()
 
 
 # In[ ]:
