@@ -181,66 +181,55 @@ def P_2(eps, E_N, E_S):
     for i in range(len(matrix)):
         row = matrix[i]
         for j in range(len(row)):
-            n, l, p, r, s = row[j]
+            n, w, p, e, s = row[j]
             
             pn = falsePerception
             ps = falsePerception
-            pr = truePerception
 
             if n == E_N:
                 pn = truePerception
             if s == E_S:
                 ps = truePerception
-            if r == True:
-                pr = truePerception
-            else:
-                pr = falsePerception
                 
             if mapa[i][j]==0:
                 wall=1
             else:
                 wall=0
                 
-            pr = truePerception
-            den += (pr* pn * ps * wall)
-            #print den
-    
-    
-#    print 'den ',den
-    
+            den += (p * pn * ps * wall)
+            #print den    
 
-    count=0
+    peTrue=0
     
     for i in range(len(matrix)):
         row = matrix[i]
         for j in range(len(row)):
-            n, l, p, r, s = row[j]
+            n, w, p, e, s = row[j]
+            
             pn = falsePerception
             ps = falsePerception
-            pr = falsePerception
+            pe = falsePerception
+            
             if n == E_N:
                 pn = truePerception
             if s == E_S:
                 ps = truePerception
+            if e == True: # fix perception
+                pe = truePerception
            # print r
             if mapa[i][j]==0:
                 wall=1
             else:
                 wall=0
             
-            if r == True:
-                pr = truePerception
-            else:
-                pr = falsePerception
-            pr = (pr * pn * ps*wall)
+            peTrue += (p * pn * ps * pe  * wall)
             #/den
         #print i,' ',j,' ',pr,' ',pr/den
-            count += pr 
 # print count    
-    pr = count/den
+    peTrue = peTrue/den
 #    print pr
             
-    pd = {True:pr, False:(1-pr)}   
+    pd = {True:peTrue, False:(1-peTrue)}   
     
     return pd
 
@@ -267,10 +256,9 @@ def P_3(eps, S):
     falsePerception = eps;
     
     pb=0
+    
     if(len(S)==1):
         
-
-
         for i in range(len(matrix)):
                 row = matrix[i]
                 for j in range(len(row)):
@@ -606,6 +594,7 @@ def test_P_2():
     assert approx_equal(pd[False], 1.0)
     pd = P_2(0.3, True, False)
     assert approx_equal(pd[False], 0.5514492753623188)
+    print "pass test 2"
 
 def test_P_3():
     pd = P_3(0.1, {Directions.EAST: True, Directions.WEST: True})
@@ -614,6 +603,7 @@ def test_P_3():
     assert approx_equal(pd, 0.3999999999999999)
     pd = P_3(0.2, {Directions.EAST: False, Directions.WEST: True, Directions.SOUTH: True})
     assert approx_equal(pd, 0.0980000000000000)
+    print "pass test 3"
 
 def test_P_4():
     E_1 = {Directions.NORTH: False, Directions.SOUTH: False, Directions.EAST: True, Directions.WEST: True}
@@ -647,7 +637,7 @@ def test_P_7():
     pd = P_7(0.3, False, False)
     assert approx_equal(pd[False], 0.5023529411764706)
     
-test_P_2()
+test_P_3()
 
 
 # In[ ]:
