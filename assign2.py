@@ -1,3 +1,4 @@
+from networkx.classes.function import neighbors
 
 # coding: utf-8
 
@@ -34,6 +35,8 @@ class Directions:
 # i. $P(X=x|E_{N}=e_{N},E_{S}=e_{S})$
 
 # In[ ]:
+
+import copy
 
 def getMapa():
     mapa = [[0] * 6 for i in range(1, 6)]
@@ -91,6 +94,20 @@ def getMap():
             matriz[x][y] = [n, l, p, r, s]
             
     return matriz
+
+def getNeighbors(matrix, x, y):
+    neighbors = []
+    
+    if x > 0:
+        neighbors.append([x-1, y])
+    if x+1 < len(matrix):
+        neighbors.append([x+1, y])
+    if y > 0:
+        neighbors.append([x, y-1])
+    if y+1 < len(matrix[x]):
+        neighbors.append([x, y+1])
+    
+    return neighbors
 
 # In[10]:
 
@@ -245,6 +262,7 @@ P_3(0.3, {Directions.EAST: True, Directions.SOUTH: False})
 # i. $P(X_{4}=x_{4}|E_{1}=e_{1},E_{3}=e_{3})$
 
 # In[13]:
+    
 
 def P_4(eps, E_1, E_3):
     '''
@@ -255,8 +273,8 @@ def P_4(eps, E_1, E_3):
     truePerception = 1 - eps;
     falsePerception = eps;
     
-    
-    matrix = getMap()
+
+    matrix = getMap()       # P(X1)
     for i in range(len(matrix)):
         row = matrix[i]
         for j in range(len(row)):
@@ -274,8 +292,28 @@ def P_4(eps, E_1, E_3):
                 pe = truePerception
             if w == E_1[Directions.WEST]:
                 pw = truePerception
-            p = (p * pn * ps * pe * pw)
+            p = (p * pn * ps * pe * pw)     # P(X1)P(E1 | X1)
             row[j][2] = p
+            
+            matrix2 = copy.deepcopy(matrix)
+            for i2 in range(len(matrix2)):
+                row2 = matrix2[i]
+                for j2 in range(len(row2)):
+                    n2, w2, p2, e2, s2 = row2[j]
+                    neighbors = getNeighbors(matrix2, i,j)
+                    px2 = 1/float(len(neighbors))
+                    isNeighbor = False
+                    for neighbor in neighbors:
+                        a, b = neighbor
+                        if i2==a and j2 == b:
+                            p2 = p2 * px2   # P(X1)P(E1 | X1)P(X2 | X1)
+                            isNeighbor = True
+                    if isNeighbor == False:
+                        p2 = 0
+                    
+                    row2[j][2] = p2
+                    
+                        
     
     
     
