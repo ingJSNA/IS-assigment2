@@ -252,7 +252,43 @@ def P_4(eps, E_1, E_3):
     Arguments: E_1, E_3 dictionaries of type Directions --> {True,False}
                0 <= eps <= 1
     '''
+    truePerception = 1 - eps;
+    falsePerception = eps;
+    
+    
+    matrix = getMap()
+    for i in range(len(matrix)):
+        row = matrix[i]
+        for j in range(len(row)):
+            n, w, p, e, s = row[j]
+            
+            pn = falsePerception
+            ps = falsePerception
+            pe = falsePerception
+            pw = falsePerception
+            if n == E_1[Directions.NORTH]:
+                pn = truePerception
+            if s == E_1[Directions.SOUTH]:
+                ps = truePerception
+            if e == E_1[Directions.EAST]:
+                pe = truePerception
+            if w == E_1[Directions.WEST]:
+                pw = truePerception
+            p = (p * pn * ps * pe * pw)
+            row[j][2] = p
+    
+    
+    
     pd = {(x, y):0 for x in range(1, 7) for y in range(1, 6)}
+    
+    for i in range(len(matrix)):
+        row = matrix[i]
+        for j in range(len(row)):
+            n, w, p, e, s = row[j]
+                        # Cambiar a coordenadas cartesianas
+            pd[(j + 1, 5 - i)] = p
+                
+    
     return pd
 
 E_1 = {Directions.NORTH: True, Directions.SOUTH: False, Directions.EAST: True, Directions.WEST: False}
@@ -331,6 +367,7 @@ def test_P_1():
     pd = P_1(0.3, True, False)
     assert approx_equal(pd[(2, 1)], 0.03804347826086956)
     assert approx_equal(pd[(3, 1)], 0.016304347826086956)
+    print "pass test 1"
 
 def test_P_2():
     pd = P_2(0.0, True, True)
@@ -378,7 +415,7 @@ def test_P_7():
     pd = P_7(0.3, False, False)
     assert approx_equal(pd[False], 0.5023529411764706)
     
-test_P_3()
+test_P_4()
 
 
 # In[ ]:
