@@ -185,16 +185,28 @@ def P_2(eps, E_N, E_S):
             
             pn = falsePerception
             ps = falsePerception
+            pr = truePerception
 
             if n == E_N:
                 pn = truePerception
             if s == E_S:
                 ps = truePerception
-            den += (r * pn * ps)
-
+            if r == True:
+                pr = truePerception
+            else:
+                pr = falsePerception
+                
+            if mapa[i][j]==0:
+                wall=1
+            else:
+                wall=0
+                
+            pr = truePerception
+            den += (pr* pn * ps * wall)
+            #print den
     
     
-    
+#    print 'den ',den
     
 
     count=0
@@ -221,11 +233,14 @@ def P_2(eps, E_N, E_S):
             else:
                 pr = falsePerception
             pr = (pr * pn * ps*wall)
-           # print i,' ',j
+            #/den
+        #print i,' ',j,' ',pr,' ',pr/den
             count += pr 
-          #  print pr
+# print count    
+    pr = count/den
+#    print pr
             
-    pd = {True:count/24, False:(24-count)/24}   
+    pd = {True:pr, False:(1-pr)}   
     
     return pd
 
@@ -243,7 +258,186 @@ def P_3(eps, S):
     {True,False}
                0 <= eps <= 1
     '''
-    return 0
+#   for i in range(len(S)):
+#        print S[i]
+
+    mapa = getMapa()
+    matrix = getMap()
+    truePerception = 1 - eps;
+    falsePerception = eps;
+    
+    pb=0
+    if(len(S)==1):
+        
+
+
+        for i in range(len(matrix)):
+                row = matrix[i]
+                for j in range(len(row)):
+                    n, l, p, r, s = row[j]
+                   
+                    pr = falsePerception
+                    pn = falsePerception
+                    pl = falsePerception
+                    ps = falsePerception
+                    
+                    if mapa[i][j]==0:
+                        wall=1
+                    else:
+                        wall=0
+
+                    if S.get(Directions.EAST) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        pb += (pr*wall*p)
+                    elif S.get(Directions.WEST) != None:
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        pb += (pl*wall*p)
+                    elif S.get(Directions.SOUTH) != None:
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        pb += (ps*wall*p)
+                    elif S.get(Directions.NORTH) != None:
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        pb += (pn*wall*p)
+    elif(len(S)==2):
+        for i in range(len(matrix)):
+                row = matrix[i]
+                for j in range(len(row)):
+                    n, l, p, r, s = row[j]
+                  
+                    pr = falsePerception
+                    pn = falsePerception
+                    pl = falsePerception
+                    ps = falsePerception
+                    
+                    if mapa[i][j]==0:
+                        wall=1
+                    else:
+                        wall=0
+
+                    if S.get(Directions.EAST) != None and S.get(Directions.WEST) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        pb += (pr*pl*wall*p)
+                    elif S.get(Directions.EAST) != None and S.get(Directions.SOUTH) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        pb += (pr*ps*wall*p)
+                    elif S.get(Directions.EAST) != None and S.get(Directions.NORTH) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        pb += (pr*pn*wall*p)
+                    elif S.get(Directions.WEST) != None and S.get(Directions.SOUTH) != None:
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        pb += (pl*ps*wall*p)
+                    
+                    elif S.get(Directions.WEST) != None and S.get(Directions.NORTH) != None:
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        pb += (pl*pn*wall*p)
+                    elif S.get(Directions.NORTH) != None and S.get(Directions.SOUTH) != None:
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        pb += (pn*ps*wall*p)
+                    
+    
+    elif(len(S)==3):
+        for i in range(len(matrix)):
+                row = matrix[i]
+                for j in range(len(row)):
+                    n, l, p, r, s = row[j]
+                  
+                    pr = falsePerception
+                    pn = falsePerception
+                    pl = falsePerception
+                    ps = falsePerception
+                    
+                    if mapa[i][j]==0:
+                        wall=1
+                    else:
+                        wall=0
+
+                    if S.get(Directions.EAST) != None and S.get(Directions.WEST) != None and S.get(Directions.SOUTH) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        pb += (pr*pl*ps*wall*p)
+                    elif S.get(Directions.EAST) != None and S.get(Directions.WEST) and S.get(Directions.NORTH) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        pb += (pr*pl*pn*wall*p)
+                    elif S.get(Directions.EAST) != None and S.get(Directions.NORTH) != None and S.get(Directions.SOUTH) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        pb += (pr*pn*ps*wall*p)    
+                    elif S.get(Directions.WEST) != None and S.get(Directions.NORTH) != None and S.get(Directions.SOUTH) != None:
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        pb += (pl*pn*ps*wall*p)  
+                    
+    elif(len(S)==4):
+        for i in range(len(matrix)):
+                row = matrix[i]
+                for j in range(len(row)):
+                    n, l, p, r, s = row[j]
+                  
+                    pr = falsePerception
+                    pn = falsePerception
+                    pl = falsePerception
+                    ps = falsePerception
+                    
+                    if mapa[i][j]==0:
+                        wall=1
+                    else:
+                        wall=0
+
+                    if S.get(Directions.EAST) != None and S.get(Directions.WEST) != None and S.get(Directions.SOUTH) != None and S.get(Directions.NORTH) != None:
+                        if r == S.get(Directions.EAST):
+                            pr = truePerception
+                        if l == S.get(Directions.WEST):
+                            pl = truePerception
+                        if s == S.get(Directions.SOUTH):
+                            ps = truePerception
+                        if n == S.get(Directions.NORTH):
+                            pn = truePerception
+                        pb += (pr*pl*ps*pn*wall*p)
+                    
+                    
+#    print pb
+    
+    
+    return pb
 
 P_3(0.3, {Directions.EAST: True, Directions.SOUTH: False})
 
@@ -453,7 +647,7 @@ def test_P_7():
     pd = P_7(0.3, False, False)
     assert approx_equal(pd[False], 0.5023529411764706)
     
-test_P_4()
+test_P_2()
 
 
 # In[ ]:
